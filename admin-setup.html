@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Setup - PaulPhiloPress</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-setup.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👩‍🎓PaulPhiloPress Admin Setup</div>
+            <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-controls="navMenu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu" aria-hidden="true">
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="setup-page">
+        <div class="setup-card">
+            <h1>🔐 Admin Setup</h1>
+            <p class="subtitle">Create your unique admin credentials (Secure)</p>
+
+            <div id="alert" class="alert"></div>
+
+            <div id="setupForm">
+                <form class="setup-form" >
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required
+                            placeholder="admin@company.com"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            required
+                            placeholder="Choose your admin username"
+                            minlength="3"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required
+                            placeholder="Create a strong password"
+                            minlength="6"
+                        >
+                        <div class="password-requirements">
+                            <strong>Password Requirements:</strong>
+                            <ul>
+                                <li>At least 6 characters long</li>
+                                <li>Use uppercase, lowercase, and numbers for better security</li>
+                                <li>Keep it confidential - only you should know it</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password *</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            required
+                            placeholder="Re-enter your password"
+                        >
+                    </div>
+
+                    <button type="submit" id="submitBtn">Create Admin Credentials</button>
+                </form>
+                <div class="loading" id="loading">Processing...</div>
+            </div>
+
+            <div class="setup-note">
+                <strong>⚠️ Important:</strong> Only one admin may exist at a time. 
+                The current admin must delete their credentials before a new admin can register.
+            </div>
+        </div>
+    </div>
+
+        <script src="script.js"></script>
+    <script src="admin-setup.js"></script>
+</body>
+</html>

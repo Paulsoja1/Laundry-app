@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue - PaulPhiloPress Support</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="support-issues.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👩‍🎓PaulPhiloPress Support</div>
+            <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-controls="navMenu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu" aria-hidden="true">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="account.html">My Account</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="support-container">
+        <div class="support-card">
+            <h1>🆘 Report an Issue</h1>
+            <p class="subtitle">Let us know about any challenges you face. Our admin team will help resolve them quickly.</p>
+
+            <div id="alert" class="alert"></div>
+
+            <div class="info-box">
+                <h3>📌 Issue Categories:</h3>
+                <p><strong>Technical:</strong> Website/app bugs or functionality issues</p>
+                <p><strong>Payment:</strong> Payment processing or billing problems</p>
+                <p><strong>Order:</strong> Order-related issues or concerns</p>
+                <p><strong>Delivery:</strong> Delivery or rider-related problems</p>
+                <p><strong>Other:</strong> Any other issues</p>
+            </div>
+
+            <form class="support-form" onsubmit="handleSubmitChallenge(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            required
+                            placeholder="Your full name"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required
+                            placeholder="your@email.com"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="technical">Technical Issue</option>
+                            <option value="payment">Payment Issue</option>
+                            <option value="order">Order Issue</option>
+                            <option value="delivery">Delivery Issue</option>
+                            <option value="other">Other Issue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority *</label>
+                        <select id="priority" name="priority" required>
+                            <option value="">Select priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject/Title *</label>
+                    <input 
+                        type="text" 
+                        id="subject" 
+                        name="subject" 
+                        required
+                        placeholder="Brief title of your issue"
+                        minlength="3"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        required
+                        placeholder="Please describe your issue in detail. Include what happened, when it happened, and any steps to reproduce the problem."
+                        minlength="10"
+                    ></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn">Submit Issue Report</button>
+                <div class="loading" id="loading">Submitting...</div>
+            </form>
+
+            <p style="text-align: center; margin-top: 2rem; color: #666; font-size: 0.9rem;">
+                ✓ Our admin team will review your issue and respond via email<br>
+                ✓ Average response time: 24 hours
+            </p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function handleSubmitChallenge(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const category = document.getElementById('category').value;
+            const priority = document.getElementById('priority').value;
+            const subject = document.getElementById('subject').value.trim();
+            const description = document.getElementById('description').value.trim();
+
+            // Validation
+            if (!name || !email || !category || !priority || !subject || !description) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (subject.length < 3) {
+                showAlert('Subject must be at least 3 characters', 'error');
+                return;
+            }
+
+            if (description.length < 10) {
+                showAlert('Description must be at least 10 characters', 'error');
+                return;
+            }
+
+            // Disable button and show loading
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            document.getElementById('loading').style.display = 'block';
+
+            // Get API URL
+            const API_URL = window.location.protocol === 'file:' ? 'http://127.0.0.1:8000' : window.location.origin;
+
+            // Generate user ID (for demo, use email + timestamp)
+            const userId = 'user_' + Math.random().toString(36).substr(2, 9);
+
+            // Submit challenge
+            fetch(`${API_URL}/api/challenges`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    user_name: name,
+                    user_email: email,
+                    subject: subject,
+                    description: description,
+                    category: category,
+                    priority: priority
+                })
+            })
+            .then(response => {
+                document.getElementById('loading').style.display = 'none';
+                
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.detail || 'Submission failed');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                showAlert(
+                    'Issue submitted successfully! (ID: ' + data.challenge_id + ')',
+                    'success'
+                );
+                
+                // Reset form
+                document.querySelector('.support-form').reset();
+                submitBtn.disabled = false;
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                showAlert(error.message || 'Failed to submit issue. Please try again.', 'error');
+            });
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.className = `alert ${type}`;
+            alertDiv.textContent = message;
+        }
+
+        // Load navbar
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('navMenu');
+
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    hamburger.setAttribute('aria-expanded', 
+                        hamburger.getAttribute('aria-expanded') === 'false' ? 'true' : 'false'
+                    );
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - PaulPhiloPress</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .about-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        .about-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .about-section {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .about-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+
+        .about-section ul {
+            list-style-position: inside;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .about-section li {
+            margin-bottom: 0.8rem;
+            margin-left: 20px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .value-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .value-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .value-card p {
+            color: white;
+            margin: 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .team-member {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #eee;
+            transition: border-color 0.3s;
+        }
+
+        .team-member:hover {
+            border-color: #667eea;
+        }
+
+        .team-member h4 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member p {
+            color: #666;
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .team-member .role {
+            color: #999;
+            font-style: italic;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 30px;
+            padding-left: 40px;
+            border-left: 3px solid #667eea;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border: 3px solid white;
+            border-radius: 50%;
+        }
+
+        .timeline-item h4 {
+            color: #667eea;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .timeline-item p {
+            margin: 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👩‍🎓PaulPhiloPress</div>
+            <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-controls="navMenu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu" aria-hidden="true">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="about.html" class="active">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="order.html" class="btn-order">Place Order</a></li>
+                <li><a href="account.html">My Account</a></li>
+                <li><a href="/admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="about-container">
+        <!-- About Hero -->
+        <div class="about-hero">
+            <h1>About PaulPhiloPress</h1>
+            <p>Your Trusted Partner in Professional Laundry Care</p>
+        </div>
+
+        <!-- Our Story -->
+        <div class="about-section">
+            <h2>Our Story</h2>
+            <p>
+                PaulPhiloPress was founded in 2026 with a simple mission: to make professional laundry services accessible and convenient for everyone. What started as a small family business has grown into a trusted service provider serving thousands of happy customers.
+            </p>
+            <p>
+                We believe that everyone deserves clean, fresh clothes without the hassle of doing laundry themselves. That's why we've dedicated ourselves to providing exceptional service with unmatched quality and reliability.
+            </p>
+        </div>
+
+        <!-- Our Mission -->
+        <div class="about-section">
+            <h2>Our Mission</h2>
+            <p>
+                Our mission is simple: to provide the highest quality laundry and dry cleaning services while making the process as convenient as possible for our customers. We aim to become your go-to laundry service partner by offering:
+            </p>
+            <ul>
+                <li>Professional and expert cleaning services for all fabric types</li>
+                <li>Fast and reliable pickup and delivery</li>
+                <li>Competitive pricing without compromising quality</li>
+                <li>Exceptional customer service every single time</li>
+                <li>Eco-friendly cleaning methods</li>
+            </ul>
+        </div>
+
+        <!-- Our Values -->
+        <div class="about-section">
+            <h2>Our Core Values</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <h3>🎯 Quality</h3>
+                    <p>We maintain the highest standards in every wash and delivery</p>
+                </div>
+                <div class="value-card">
+                    <h3>⚡ Reliability</h3>
+                    <p>Your laundry is in safe hands with our trusted experts</p>
+                </div>
+                <div class="value-card">
+                    <h3>💚 Sustainability</h3>
+                    <p>We use eco-friendly products to protect our environment</p>
+                </div>
+                <div class="value-card">
+                    <h3>😊 Customer Focus</h3>
+                    <p>Your satisfaction is our top priority</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Why Choose Us -->
+        <div class="about-section">
+            <h2>Why Choose PaulPhiloPress?</h2>
+            <ul>
+                <li><strong>Expert Team:</strong> Our cleaning experts are trained and experienced in handling all types of fabrics and stains</li>
+                <li><strong>Fast Service:</strong> Get your clothes cleaned and delivered in 24-48 hours</li>
+                <li><strong>Convenient:</strong> Easy online booking, flexible pickup and delivery times</li>
+                <li><strong>Affordable:</strong> Competitive pricing with no hidden charges</li>
+                <li><strong>Eco-Friendly:</strong> We use sustainable cleaning methods and products</li>
+                <li><strong>Customer Support:</strong> 24/7 customer support to answer your questions</li>
+            </ul>
+        </div>
+
+        <!-- Our Team -->
+        <div class="about-section">
+            <h2>Our Leadership Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <h4>👨‍💼 John Smith</h4>
+                    <p class="role">Founder & CEO</p>
+                    <p>Passionate about revolutionizing the laundry industry with innovative solutions</p>
+                </div>
+                <div class="team-member">
+                    <h4>👩‍💼 Sarah Johnson</h4>
+                    <p class="role">Operations Director</p>
+                    <p>Ensures excellence in every service with 10+ years of industry experience</p>
+                </div>
+                <div class="team-member">
+                    <h4>👨‍💼 Michael Chen</h4>
+                    <p class="role">Customer Service Manager</p>
+                    <p>Dedicated to providing exceptional support to our valued customers</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Journey -->
+        <div class="about-section">
+            <h2>Our Journey</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>2020</h4>
+                    <p>PaulPhiloPress is founded with the vision of making quality laundry services accessible to everyone</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2021</h4>
+                    <p>Expanded to serve 5,000+ customers with 100% satisfaction rate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2022</h4>
+                    <p>Launched our mobile app for easier booking and tracking</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2023</h4>
+                    <p>Reached 50,000 happy customers and opened two additional service centers</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2024</h4>
+                    <p>Implemented AI-powered order management and customer personalization</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2026</h4>
+                    <p>Continuing to innovate with online dashboard and real-time tracking features</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="about-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center;">
+            <h2 style="color: white; border-bottom-color: white;">Ready to Experience PaulPhiloPress?</h2>
+            <p style="color: white; font-size: 1.2rem;">Join thousands of satisfied customers who trust us with their laundry</p>
+            <a href="order.html" class="btn btn-primary" style="margin-top: 20px;">Place Your First Order</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 PaulPhiloPress. All rights reserved.</p>
+        <p>Contact: info@paulphilopress.com | Phone: +234 810 563 0911</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

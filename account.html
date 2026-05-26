@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - PaulPhiloPress</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="account.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👩‍🎓PaulPhiloPress</div>
+            <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-controls="navMenu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu" aria-hidden="true">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="order.html">Place Order</a></li>
+                <li><a href="/admin">Admin</a></li>
+                <li><a href="account.html" class="active">My Account</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="account-container">
+        <div class="account-grid">
+            <!-- Profile Section -->
+            <div class="profile-card">
+                <h2>👤 My Profile</h2>
+                <div id="viewProfileSection">
+                    <div class="profile-summary">
+                        <div class="profile-avatar-wrapper">
+                            <img id="profileAvatar" class="profile-avatar" src="" alt="Profile picture">
+                        </div>
+                        <div class="profile-info" id="profileInfo">
+                            <!-- Profile data will load here -->
+                        </div>
+                    </div>
+                    <button class="edit-btn" id="editProfileBtn" type="button" onclick="editProfile()">Edit Profile</button>
+                </div>
+                <form id="editProfileForm" class="profile-edit-form">
+                    <div class="form-group">
+                        <label>Profile Picture</label>
+                        <input type="file" id="editProfilePic" accept="image/*">
+                    </div>
+                    <div class="profile-avatar-wrapper">
+                        <img id="editAvatarPreview" class="profile-avatar" src="" alt="Profile preview">
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="editUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="editPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea id="editAddress" rows="3" required></textarea>
+                    </div>
+                    <div class="profile-edit-buttons">
+                        <button class="edit-btn" type="submit">Save Changes</button>
+                        <button class="btn btn-secondary" type="button" onclick="cancelEditProfile()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>Total Orders</h4>
+                    <div class="stat-value" id="totalOrders">0</div>
+                </div>
+                <div class="stat-box">
+                    <h4>Total Spent</h4>
+                    <div class="stat-value" id="totalSpent">₦0.00</div>
+                </div>
+                <div class="stat-box">
+                    <h4>Member Since</h4>
+                    <div class="stat-value" id="memberSince">-</div>
+                </div>
+                <div class="stat-box">
+                    <h4>Account Status</h4>
+                    <div class="stat-value" id="accountStatus">Active</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="account-section-grid">
+            <!-- My Orders Section -->
+            <div class="orders-section">
+                <h2>📦 My Orders</h2>
+                <div id="ordersContainer">
+                    <!-- Orders will load here -->
+                </div>
+            </div>
+
+            <!-- Payment History Section -->
+            <div class="payments-section">
+                <h2>💳 Payment History</h2>
+                <div id="paymentsContainer">
+                    <!-- Payments will load here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="account.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

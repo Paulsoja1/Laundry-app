@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PaulPhiloPress</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👩‍🎓PaulPhiloPress Admin</div>
+            <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-controls="navMenu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu" aria-hidden="true">
+                <li><a href="index.html" target="_blank" rel="noopener noreferrer">Home</a></li>
+                <li><a href="about.html" target="_blank" rel="noopener noreferrer">About Us</a></li>
+                <li><a href="contact.html" target="_blank" rel="noopener noreferrer">Contact</a></li>
+                <li><a href="/admin" class="active" target="_blank" rel="noopener noreferrer">Admin Dashboard</a></li>
+                <li><a href="account.html" target="_blank" rel="noopener noreferrer">My Account</a></li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="dashboardAlert" class="dashboard-alert" role="status" aria-live="polite"></div>
+
+    <div class="dashboard-actions">
+        <button id="deleteAdminBtn" class="btn-secondary" onclick="deleteAdminCredentials()">Delete Admin Credentials</button>
+    </div>
+
+    <div class="admin-container" id="statsContainer">
+        <!-- Stats will be loaded here -->
+    </div>
+
+    <div class="table-container">
+        <div class="table-title">📊 Orders Overview</div>
+        <table id="ordersTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User Name</th>
+                    <th>Service Type</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Rider</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <div class="table-title">👥 Registered Users</div>
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Joined</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <div class="table-title">💳 Payment Records</div>
+        <table id="paymentsTable">
+            <thead>
+                <tr>
+                    <th>Payment ID</th>
+                    <th>Order ID</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <div class="table-title">✉️ Contact Messages</div>
+        <table id="messagesTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <div class="table-title">🔴 User Challenges & Issues</div>
+        <table id="challengesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Category</th>
+                    <th>Subject</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Challenge Details Modal -->
+    <div id="challengeModal" class="modal-overlay">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2 id="modalTitle">Challenge Details</h2>
+                <button onclick="closeChallengeModal()" class="modal-close">&times;</button>
+            </div>
+            
+            <div class="modal-grid">
+                <div class="modal-field">
+                    <label>Challenge ID:</label>
+                    <p id="modalChallengeId"></p>
+                </div>
+                <div class="modal-field">
+                    <label>Priority:</label>
+                    <select id="modalPriority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label>User:</label>
+                    <p id="modalUserName"></p>
+                </div>
+                <div class="modal-field">
+                    <label>Status:</label>
+                    <select id="modalStatus">
+                        <option value="open">Open</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label>Email:</label>
+                    <p id="modalUserEmail"></p>
+                </div>
+                <div class="modal-field">
+                    <label>Category:</label>
+                    <p id="modalCategory"></p>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <label>Subject:</label>
+                <p id="modalSubject"></p>
+            </div>
+            
+            <div class="modal-section">
+                <label>Description:</label>
+                <p id="modalDescription"></p>
+            </div>
+            
+            <div class="modal-section">
+                <label>Admin Notes:</label>
+                <textarea id="modalAdminNotes"></textarea>
+            </div>
+            
+            <div class="modal-footer">
+                <button onclick="closeChallengeModal()" class="modal-secondary">Cancel</button>
+                <button onclick="saveChallengeChanges()" class="modal-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

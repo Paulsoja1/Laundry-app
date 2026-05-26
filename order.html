@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Your Order - PaulPhiloPress</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👩‍🎓PaulPhiloPress</div>
+            <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-controls="navMenu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu" aria-hidden="true">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="order.html" class="active btn-order">Place Order</a></li>
+                <li><a href="account.html">My Account</a></li>
+                <li><a href="/admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Order Page: contains the order form and live order summary -->
+    <section class="order-page">
+        <h1>Place Your Order</h1>
+        
+        <div class="order-container">
+                        <!-- Order Form -->
+                        <!--
+                                - `id="orderForm"` is used by `script.js` to attach submit handler
+                                - The form contains service selection, quantity, special instructions,
+                                    delivery details and pickup/delivery scheduling.
+                        -->
+                        <form class="order-form" id="orderForm">
+                <h2>Laundry Details</h2>
+
+                <!-- Service Selection: choose service (prices shown in Naira) -->
+                <div class="form-group">
+                    <label for="service">Select Service:</label>
+                    <select id="service" required>
+                        <option value="">-- Choose a service --</option>
+                        <option value="wash-fold">Wash & Fold - ₦2/lb</option>
+                        <option value="dry-clean">Dry Cleaning - ₦5/item</option>
+                        <option value="express">Express Service - ₦4/lb</option>
+                        <option value="special-care">Special Care - ₦6/item</option>
+                        <option value="bedding">Bedding & Linens - ₦8/set</option>
+                        <option value="baby-care">Baby Care - ₦3/lb</option>
+                    </select>
+                </div>
+
+                <!-- Quantity -->
+                <div class="form-group">
+                    <label for="quantity">Quantity (lbs or items):</label>
+                    <input type="number" id="quantity" min="1" step="1" required placeholder="e.g., 5">
+                </div>
+
+                <!-- Special Instructions -->
+                <div class="form-group">
+                    <label for="instructions">Special Instructions:</label>
+                    <textarea id="instructions" rows="4" placeholder="e.g., Delicate fabrics, Do not bleach, etc."></textarea>
+                </div>
+
+                <!-- Estimated Cost: updated live by `calculateCost()` -->
+                <div class="estimated-cost">
+                    <h3>Estimated Cost: ₦<span id="estimatedCost">0</span></h3>
+                </div>
+
+                <hr>
+
+                <h2>Delivery Details</h2>
+
+                <!-- Customer Name -->
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" required placeholder="Your full name">
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" required placeholder="your@email.com">
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" required placeholder="+1-234-567-8900">
+                </div>
+
+                <!-- Delivery Address -->
+                <div class="form-group">
+                    <label for="address">Delivery Address:</label>
+                    <textarea id="address" rows="3" required placeholder="Street address, apartment, etc."></textarea>
+                </div>
+
+                <!-- City, State, Zip -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" required placeholder="City">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State:</label>
+                        <input type="text" id="state" required placeholder="State">
+                    </div>
+                    <div class="form-group">
+                        <label for="zip">ZIP Code:</label>
+                        <input type="text" id="zip" required placeholder="12345">
+                    </div>
+                </div>
+
+                <!-- Pickup Date -->
+                <div class="form-group">
+                    <label for="pickupDate">Preferred Pickup Date:</label>
+                    <input type="date" id="pickupDate" required>
+                </div>
+
+                <!-- Pickup Time -->
+                <div class="form-group">
+                    <label for="pickupTime">Preferred Pickup Time:</label>
+                    <select id="pickupTime" required>
+                        <option value="">-- Choose time --</option>
+                        <option value="morning">Morning (8:00 AM - 12:00 PM)</option>
+                        <option value="afternoon">Afternoon (12:00 PM - 4:00 PM)</option>
+                        <option value="evening">Evening (4:00 PM - 8:00 PM)</option>
+                    </select>
+                </div>
+
+                <!-- Delivery Date -->
+                <div class="form-group">
+                    <label for="deliveryDate">Preferred Delivery Date:</label>
+                    <input type="date" id="deliveryDate" required>
+                </div>
+
+                <!-- Delivery Time -->
+                <div class="form-group">
+                    <label for="deliveryTime">Preferred Delivery Time:</label>
+                    <select id="deliveryTime" required>
+                        <option value="">-- Choose time --</option>
+                        <option value="morning">Morning (8:00 AM - 12:00 PM)</option>
+                        <option value="afternoon">Afternoon (12:00 PM - 4:00 PM)</option>
+                        <option value="evening">Evening (4:00 PM - 8:00 PM)</option>
+                    </select>
+                </div>
+
+                <!-- Checkbox for terms -->
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the terms and conditions</label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-submit">Place Order</button>
+            </form>
+
+            <!-- Order Summary: reflects selected service and estimated cost -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-item">
+                    <span>Service:</span>
+                    <span id="summaryService">-</span>
+                </div>
+                <div class="summary-item">
+                    <span>Quantity:</span>
+                    <span id="summaryQuantity">-</span>
+                </div>
+                <div class="summary-item">
+                    <span>Cost:</span>
+                    <span id="summaryCost">-</span>
+                </div>
+                <hr>
+                <div class="summary-item total">
+                    <span>Total:</span>
+                    <span id="summaryTotal">₦0.00</span>
+                </div>
+                <div class="summary-dates">
+                    <p><strong>Pickup:</strong> <span id="summaryPickup">-</span></p>
+                    <p><strong>Delivery:</strong> <span id="summaryDelivery">-</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 PaulPhiloPress. All rights reserved.</p>
+        <p>Contact: info@paulphilopress.com | Phone: +234 810 563 0911</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

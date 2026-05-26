@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - PaulPhiloPress</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-login.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👩‍🎓PaulPhiloPress Admin</div>
+            <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-controls="navMenu"
+                aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu" aria-hidden="true">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="account.html">My Account</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="login-page">
+        <section class="login-card">
+            <h1>Admin Login</h1>
+            <p>Enter your administrator credentials to access the dashboard. This page protects admin access from
+                unauthorized users.</p>
+
+            <div id="alertBox"></div>
+            <div id="setupNotice" class="login-help">
+                <p>No admin account found — <a href="admin-setup.html">Create admin credentials</a></p>
+            </div>
+
+            <form id="adminLoginForm" class="login-form">
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <input type="text" id="adminUsername" name="adminUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" name="adminPassword" required>
+                </div>
+                <button type="submit" id="loginBtn">Login</button>
+            </form>
+            <div id="adminHelp" class="login-help">
+                <p id="createAdminMessage">New admin? <a href="admin-setup.html">Create credentials here</a></p>
+                <p>Your login credentials are encrypted and secure.</p>
+                <p id="existingAdminNotice">An admin account already exists. To create a new admin, the current admin
+                    must delete their credentials from the dashboard.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="admin-login.js"></script>
+</body>
+
+</html>

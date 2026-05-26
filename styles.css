@@ -1,0 +1,1187 @@
+/* styles.css - Main stylesheet for CleanPress
+   Sections:
+   - Global resets and typography
+   - Navigation and responsive menu
+   - Hero, features, and content sections
+   - Forms, modals, and responsive breakpoints
+*/
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    color: #333;
+    background-color: #f4f4f4;
+    /* reserve space for the fixed navbar so page content isn't hidden */
+    padding-top: 72px;
+}
+
+@media (max-width: 900px) {
+    html, body {
+        overflow-x: hidden;
+    }
+
+    body {
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+    }
+}
+
+/* Navigation */
+.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 0.75rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: padding 240ms ease, box-shadow 240ms ease, backdrop-filter 240ms ease, background-color 240ms ease;
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+}
+
+/* Navbar state when page is scrolled */
+.navbar.scrolled {
+    padding: 0.45rem 0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    background-color: rgba(118, 75, 162, 0.92);
+}
+
+/* Subtle content effect when navbar is scrolled - hero content responds */
+body.nav-scrolled .hero {
+    transform: translateY(6px) scale(0.998);
+    filter: brightness(0.975) blur(0.2px);
+    transition: transform 320ms cubic-bezier(.2,.8,.2,1), filter 320ms ease;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-order {
+    background-color: #ff6b6b;
+    padding: 0.7rem 1.5rem !important;
+}
+
+.btn-order:hover {
+    background-color: #ff5252;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Animated hero advert behind the content */
+.hero-ad {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+    overflow: hidden;
+}
+
+.hero-ad::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* subtle gradient overlay to keep text legible on all screens */
+    background: linear-gradient(180deg, rgba(0,0,0,0.10), rgba(0,0,0,0.20));
+    pointer-events: none;
+}
+
+/* Slides used for crossfade carousel */
+.hero-ad .slide {
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity 800ms ease, transform 1200ms ease;
+    will-change: opacity, transform;
+}
+
+.hero-ad .slide.active {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+/* If no image is available, fall back to an animated gradient */
+.hero-ad:empty {
+    background-image: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(0,0,0,0.06));
+    animation: gradient-move 8s ease-in-out infinite;
+}
+
+@keyframes bg-pan {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Ensure hero advert is visible and well-scaled on tablet/mobile */
+@media (max-width: 768px) {
+    .hero-ad {
+        opacity: 0.62;
+        animation-duration: 14s;
+        background-position: 50% 40%;
+        background-size: cover;
+    }
+
+    .hero {
+        padding: 4.5rem 1rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-ad {
+        opacity: 0.72;
+        animation-duration: 10s;
+        background-position: 50% 35%;
+        background-size: cover;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+}
+
+/* Features Section */
+.features {
+    max-width: 1200px;
+    margin: 3rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 0 2rem;
+}
+
+.feature-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #667eea;
+}
+
+.feature-card p {
+    color: #555;
+    line-height: 1.7;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    gap: 5px;
+    width: 38px;
+    height: 32px;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.hamburger:hover,
+.hamburger:focus {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    border-radius: 3px;
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+    transform-origin: center;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* How It Works */
+.how-it-works {
+    background: white;
+    padding: 3rem 2rem;
+    margin: 2rem 0;
+}
+
+.how-it-works h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    color: #667eea;
+}
+
+.steps {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.step {
+    text-align: center;
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+}
+
+.step h4 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+/* Services Page */
+.services-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.services-page h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #667eea;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.service-item {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.service-item:hover {
+    transform: translateY(-5px);
+}
+
+.service-item h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #667eea;
+}
+
+.service-item .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff6b6b;
+    margin-bottom: 1rem;
+}
+
+.service-item ul {
+    list-style-position: inside;
+    color: #666;
+    margin-top: 1rem;
+}
+
+.service-item li {
+    margin-bottom: 0.5rem;
+}
+
+.service-categories {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+
+.service-categories h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.category-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+.category-table th,
+.category-table td {
+    padding: 1rem 1.25rem;
+    border: 1px solid #e2e8f0;
+}
+
+.category-table th {
+    background: rgba(102, 118, 234, 0.1);
+    color: #2d3748;
+    font-weight: 700;
+}
+
+.category-table td {
+    color: #4a5568;
+}
+
+.category-table td:first-child {
+    text-align: left;
+}
+
+.category-table td:last-child {
+    text-align: right;
+}
+
+.category-table tbody tr:not(:last-child) td {
+    padding-bottom: 1.25rem;
+}
+
+.cta-section {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+}
+
+.cta-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Order Page */
+.order-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.order-page h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #667eea;
+}
+
+.order-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.order-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-form h2 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 0.5rem;
+}
+
+.order-form h2:first-child {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+}
+
+.form-group.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group.checkbox input {
+    width: auto;
+    margin: 0;
+}
+
+.form-group.checkbox label {
+    margin: 0;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.estimated-cost {
+    background: #f0f0f0;
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.estimated-cost h3 {
+    color: #667eea;
+    font-size: 1.3rem;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 2rem 0;
+}
+
+/* Order Summary */
+.order-summary {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+}
+
+.order-summary h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 0.5rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item.total {
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-bottom: none;
+    border-top: 2px solid #667eea;
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.summary-dates {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.summary-dates p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Footer */
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 3rem;
+}
+
+.footer p {
+    margin: 0.5rem 0;
+}
+
+/* Registration Section */
+.registration-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin: 3rem 0;
+}
+
+.registration-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.registration-section p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    color: #667eea;
+    margin-bottom: 1.5rem;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+}
+
+.modal-content .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        background: linear-gradient(135deg, #5b6ae8 0%, #6951c5 100%);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 1rem 1.5rem 1.5rem;
+        display: none;
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-menu a {
+        padding: 0.9rem 1rem;
+        border-radius: 8px;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-container {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 4rem 1rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+
+    .features,
+    .steps,
+    .order-container,
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .order-page,
+    .services-page,
+    .registration-section {
+        padding: 2rem 1rem;
+    }
+
+    .registration-section {
+        border-radius: 12px;
+        padding: 2rem 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-order {
+        width: 100%;
+    }
+
+    .hero {
+        padding: 3rem 0.8rem;
+    }
+
+    .hero-content h1 {
+        font-size: 1.9rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .feature-card,
+    .step,
+    .order-form,
+    .order-summary,
+    .service-item {
+        padding: 1.5rem;
+    }
+
+    .nav-menu a {
+        padding: 0.9rem 0.8rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+    }
+}
+
+
+.modal-content .form-group input,
+.modal-content .form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.modal-content .form-group input:focus,
+.modal-content .form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .nav-menu {
+        gap: 1rem;
+    }
+    
+    .nav-menu a {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Navigation */
+    .hamburger {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        flex-direction: column;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+    
+    .nav-menu.active {
+        max-height: 500px;
+    }
+    
+    .nav-menu li {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-menu a {
+        display: block;
+        padding: 1rem;
+        font-size: 1rem;
+        white-space: normal;
+    }
+    
+    /* Hero Section */
+    .hero {
+        padding: 3rem 1rem;
+    }
+    
+    .hero-content h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Features */
+    .features {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 1.5rem auto;
+        padding: 0 1rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+    }
+    
+    /* Steps */
+    .steps {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+/* Utility: hide scrollbars while preserving scroll behavior
+   - Applied for small screens via media query below
+   - Also available via the `hide-scrollbar` class (used when JS detects Windows)
+*/
+.hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+    width: 0;
+    height: 0;
+}
+
+/* Hide scrollbars on small screens but keep scrolling available */
+@media (max-width: 900px) {
+    html, body, .table-container, .admin-container, .modal-content {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    .table-container::-webkit-scrollbar,
+    .admin-container::-webkit-scrollbar,
+    .modal-content::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+}
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    /* Forms */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+    
+    .order-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .order-summary {
+        position: static;
+    }
+    
+    /* Account Grid */
+    .account-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Admin Container */
+    .admin-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 1rem;
+    }
+    
+    /* Tables */
+    table {
+        font-size: 0.85rem;
+    }
+    
+    table th,
+    table td {
+        padding: 8px;
+    }
+    
+    /* Contact Grid */
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    /* Team Grid */
+    .team-grid,
+    .values-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* About Grid */
+    .about-section {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .about-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Modal */
+    .modal-content {
+        width: 95%;
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+    
+    .modal-content h2 {
+        font-size: 1.3rem;
+    }
+    
+    /* Footer */
+    .footer {
+        padding: 1rem;
+    }
+    
+    .footer p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        padding: 0 0.5rem;
+    }
+    
+    .logo {
+        font-size: 1.3rem;
+    }
+    
+    /* Hero */
+    .hero {
+        padding: 2rem 1rem;
+    }
+    
+    .hero-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .hero-content p {
+        font-size: 0.95rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Headings */
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.3rem;
+    }
+    
+    h3 {
+        font-size: 1.1rem;
+    }
+    
+    /* Forms */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.6rem;
+        font-size: 16px;
+    }
+    
+    /* Steps */
+    .steps {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Cards */
+    .stat-card,
+    .profile-card,
+    .about-section,
+    .contact-form,
+    .info-card {
+        padding: 1rem;
+    }
+    
+    /* Tables */
+    table {
+        font-size: 0.75rem;
+    }
+    
+    table th,
+    table td {
+        padding: 5px;
+    }
+    
+    .table-title {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+    
+    /* Order Item */
+    .order-item,
+    .payment-item {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .order-status,
+    .payment-info {
+        width: 100%;
+    }
+    
+    /* Registration Section */
+    .registration-section {
+        padding: 2rem 1rem;
+    }
+    
+    .registration-section h2 {
+        font-size: 1.3rem;
+    }
+    
+    .registration-section p {
+        font-size: 0.95rem;
+    }
+}
+
+/* High DPI / High Resolution Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Touch Devices */
+@media (hover: none) and (pointer: coarse) {
+    .btn,
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+    }
+    
+    .nav-menu a,
+    .btn {
+        padding: 0.8rem 1rem;
+    }
+}

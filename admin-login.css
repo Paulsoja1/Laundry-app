@@ -1,0 +1,129 @@
+/* admin-login.css - Styles for the admin login page */
+
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+    padding: 36px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-4px);
+}
+
+.login-card h1 {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: #333;
+}
+
+.login-card p {
+    margin-bottom: 1.5rem;
+    color: #606770;
+    line-height: 1.6;
+}
+
+.login-form .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.16);
+}
+
+.login-form button {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.2s ease;
+}
+
+.login-form button:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+
+.login-help {
+    text-align: center;
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.login-help strong {
+    color: #333;
+}
+
+#alertBox,
+#setupNotice {
+    display: none;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+#setupNotice {
+    background: rgba(102, 126, 234, 0.1);
+    color: #102a43;
+}
+
+#existingAdminNotice {
+    display: none;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    color: #0c5460;
+}
+
+#adminHelp a {
+    color: #667eea;
+    text-decoration: underline;
+    font-weight: 700;
+}
+
+#adminHelp a:hover {
+    color: #4d5ad4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 520px) {
+    .login-card {
+        padding: 28px;
+    }
+}

@@ -271,22 +271,22 @@
                 <form id="contactForm" action="https://formsubmit.co/paulsoja2020@gmail.com" method="POST">
                     <div class="form-group">
                         <label>Name *</label>
-                        <input type="text" id="name" required>
+                        <input type="text" id="name"  name="name" required>
                     </div>
 
                     <div class="form-group">
                         <label>Email *</label>
-                        <input type="email" id="email" required>
+                        <input type="email" id="email" name="email" required>
                     </div>
 
                     <div class="form-group">
                         <label>Phone *</label>
-                        <input type="tel" id="phone" required>
+                        <input type="tel" id="phone" name="phone" required>
                     </div>
 
                     <div class="form-group">
                         <label>Subject *</label>
-                        <select id="subject" required>
+                        <select id="subject" name="subject" required>
                             <option value="">Select a subject</option>
                             <option value="general">General Inquiry</option>
                             <option value="order">Order Related</option>
@@ -299,7 +299,7 @@
 
                     <div class="form-group">
                         <label>Message *</label>
-                        <textarea id="message" required></textarea>
+                        <textarea id="message" name="message" required></textarea>
                     </div>
 
                     <button type="submit" class="submit-btn">Send Message</button>

@@ -165,6 +165,13 @@ function updateOrderSummary() {
 function handleOrderSubmit(event) {
     event.preventDefault();
 
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('Please create an account or log in before placing an order.');
+        window.location.href = 'index.html';
+        return;
+    }
+
     // Get form data
     const formData = {
         service: document.getElementById('service').value,
@@ -181,7 +188,8 @@ function handleOrderSubmit(event) {
         pickupTime: document.getElementById('pickupTime').value,
         deliveryDate: document.getElementById('deliveryDate').value,
         deliveryTime: document.getElementById('deliveryTime').value,
-        estimatedCost: document.getElementById('estimatedCost').textContent
+        estimatedCost: document.getElementById('estimatedCost').textContent,
+        userId
     };
 
     // Validate form
@@ -224,11 +232,36 @@ function handleOrderSubmit(event) {
 // a simple local persistence mechanism for demo/demo-only apps.
 function saveOrderToLocalStorage(formData) {
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    formData.orderDate = new Date().toISOString();
-    formData.orderId = 'ORD-' + Date.now();
-    orders.push(formData);
+    const now = new Date().toISOString();
+    const orderId = 'ORD-' + Date.now();
+    const userId = localStorage.getItem('userId') || null;
+
+    // Normalize estimated cost to numeric value
+    const estimatedRaw = String(formData.estimatedCost || '0').replace(/[^0-9.-]+/g, '');
+    const estimatedNumeric = parseFloat(estimatedRaw) || 0;
+
+    // Create a normalized order record compatible with account page expectations
+    const orderRecord = {
+        order_id: orderId,
+        created_at: now,
+        user_id: userId,
+        userId: userId,
+        service_type: serviceNames[formData.service] || formData.service || '-',
+        total_price: estimatedNumeric,
+        status: 'Pending',
+        quantity: formData.quantity || 0,
+        instructions: formData.instructions || '',
+        customer_name: formData.name || '',
+        customer_email: formData.email || '',
+        customer_phone: formData.phone || '',
+        address: formData.address || '',
+        // keep raw form payload for debugging/compatibility
+        raw: formData
+    };
+
+    orders.push(orderRecord);
     localStorage.setItem('orders', JSON.stringify(orders));
-    console.log('Order saved to local storage');
+    console.log('Order saved to local storage', orderRecord);
 }
 
 // Initialize

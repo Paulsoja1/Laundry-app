@@ -37,11 +37,13 @@ async function hashPassword(password) {
 }
 
 async function saveLocalAdmin(email, username, password) {
+    const trimmedEmail = email.trim();
+    const trimmedUsername = username.trim();
     const hashedPassword = await hashPassword(password);
     const localAdmin = {
         admin_id: `local-${Date.now()}`,
-        email,
-        username,
+        email: trimmedEmail,
+        username: trimmedUsername,
         password_hash: hashedPassword,
         created_at: new Date().toISOString()
     };
@@ -52,8 +54,8 @@ async function saveLocalAdmin(email, username, password) {
 function handleAdminSetup(event) {
     event.preventDefault();
 
-    const email = document.getElementById('email').value;
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value.trim();
+    const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
 
@@ -70,54 +72,64 @@ function handleAdminSetup(event) {
     document.getElementById('submitBtn').disabled = true;
     document.getElementById('loading').style.display = 'block';
 
-    fetch(`${API_URL_SETUP}/api/admin/setup`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email,
-            username,
-            password
-        })
-    })
-    .then(response => {
+    try {
+        const response = await fetch(`${API_URL_SETUP}/api/admin/setup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                username,
+                password
+            })
+        });
+
         document.getElementById('loading').style.display = 'none';
 
         if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.detail || 'Setup failed');
-            });
+            const errorData = await response.json().catch(() => null);
+            const errorMessage = errorData?.detail || `Setup failed (${response.status})`;
+            const serverUnavailable = response.status === 404 || response.status >= 500;
+            if (!getLocalAdmin() && serverUnavailable) {
+                await saveLocalAdmin(email, username, password);
+                showAlert('Backend unavailable. Admin credentials have been saved locally. Redirecting to login...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'admin-login.html';
+                }, 2000);
+                return;
+            }
+            throw new Error(errorMessage);
         }
-        return response.json();
-    })
-    .then(data => {
+
+        await response.json();
         showAlert('Admin credentials created successfully. Redirecting to login...', 'success');
         setTimeout(() => {
             window.location.href = 'admin-login.html';
         }, 2000);
-    })
-    .catch(async error => {
+    } catch (error) {
         document.getElementById('submitBtn').disabled = false;
         document.getElementById('loading').style.display = 'none';
-        const message = error.message || 'Setup failed. Please try again.';
 
-        if (message.toLowerCase().includes('failed to fetch') || message.toLowerCase().includes('network')) {
-            if (getLocalAdmin()) {
-                showAlert('Unable to reach the backend server and a local admin already exists. Please login with your local admin credentials.', 'error');
-                return;
-            }
+        const shouldFallback = error instanceof TypeError || /Failed to fetch|NetworkError|network/i.test(error.message || '') || /Setup failed \(404\)|Setup failed \(5\d\d\)/.test(error.message || '');
+        const localAdminExists = getLocalAdmin();
 
+        if (localAdminExists) {
+            showAlert('Unable to reach the backend server and a local admin already exists. Please login with your local admin credentials.', 'error');
+            return;
+        }
+
+        if (shouldFallback) {
             await saveLocalAdmin(email, username, password);
-            showAlert('Backend unreachable. Admin credentials saved locally. Redirecting to login...', 'success');
+            showAlert('Unable to reach the backend server. Admin credentials have been saved locally. Redirecting to login...', 'success');
             setTimeout(() => {
                 window.location.href = 'admin-login.html';
             }, 2000);
             return;
         }
 
-        showAlert(message, 'error');
-    });
+        showAlert(error.message || 'Setup failed. Please try again.', 'error');
+    }
 }
 
 function initAdminSetupPage() {

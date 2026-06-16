@@ -41,8 +41,8 @@
 
             <form id="adminLoginForm" class="login-form">
                 <div class="form-group">
-                    <label for="adminUsername">Username</label>
-                    <input type="text" id="adminUsername" name="adminUsername" required>
+                    <label for="adminUsername">Username or Email</label>
+                    <input type="text" id="adminUsername" name="adminUsername" placeholder="admin username or email" required>
                 </div>
                 <div class="form-group">
                     <label for="adminPassword">Password</label>
@@ -55,6 +55,7 @@
                 <p>Your login credentials are encrypted and secure.</p>
                 <p id="existingAdminNotice">An admin account already exists. To create a new admin, the current admin
                     must delete their credentials from the dashboard.</p>
+                <p id="adminStatusMessage" class="login-help" style="display:none;"></p>
             </div>
         </section>
     </main>

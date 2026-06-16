@@ -34,9 +34,13 @@ async function hashPassword(password) {
     return hash.toString();
 }
 
-async function verifyLocalLogin(username, password) {
+async function verifyLocalLogin(usernameOrEmail, password) {
     const localAdmin = getLocalAdmin();
-    if (!localAdmin || localAdmin.username !== username) {
+    if (!localAdmin) {
+        return null;
+    }
+    const isMatch = localAdmin.username === usernameOrEmail || localAdmin.email === usernameOrEmail;
+    if (!isMatch) {
         return null;
     }
     const hashedPassword = await hashPassword(password);
@@ -72,7 +76,7 @@ function showAlert(message, type = 'error') {
     }
 }
 
-function handleAdminLogin(event) {
+async function handleAdminLogin(event) {
     event.preventDefault();
 
     const username = document.getElementById('adminUsername').value.trim();
@@ -87,24 +91,51 @@ function handleAdminLogin(event) {
     loginBtn.disabled = true;
     loginBtn.textContent = 'Logging in...';
 
-    fetch(`${API_URL_LOGIN}/api/admin/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username,
-            password
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => { throw new Error(data.detail || 'Login failed'); });
+    async function attemptLocalLogin() {
+        const localAdmin = await verifyLocalLogin(username, password);
+        if (localAdmin) {
+            localStorage.setItem('adminSessionToken', `local-${Date.now()}`);
+            localStorage.setItem('adminId', localAdmin.admin_id);
+            localStorage.setItem('adminUsername', localAdmin.username);
+            showAlert('Logged in locally. Redirecting...', 'success');
+            setTimeout(() => {
+                window.location.href = 'admin.html';
+            }, 1000);
+            return true;
         }
-        return response.json();
-    })
-    .then(data => {
-        localStorage.setItem('adminSessionToken', data.session_token);
+        return false;
+    }
+
+    const localAdminExists = getLocalAdmin() !== null;
+    if (localAdminExists) {
+        const localSuccess = await attemptLocalLogin();
+        if (localSuccess) return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL_LOGIN}/api/admin/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            const message = errorData?.detail || `Login failed (${response.status})`;
+            if (localAdminExists) {
+                const localSuccess = await attemptLocalLogin();
+                if (localSuccess) return;
+            }
+            throw new Error(message);
+        }
+
+        const data = await response.json();
+        localStorage.setItem('adminSessionToken', data.session_token || `backend-${Date.now()}`);
         localStorage.setItem('adminId', data.admin_id);
         localStorage.setItem('adminUsername', data.username);
 
@@ -112,30 +143,16 @@ function handleAdminLogin(event) {
         setTimeout(() => {
             window.location.href = 'admin.html';
         }, 1000);
-    })
-    .catch(async error => {
+    } catch (error) {
         const message = error.message || 'Invalid credentials. Please try again.';
-
-        if (message.toLowerCase().includes('failed to fetch') || message.toLowerCase().includes('network')) {
-            const localAdmin = await verifyLocalLogin(username, password);
-            if (localAdmin) {
-                localStorage.setItem('adminSessionToken', `local-${Date.now()}`);
-                localStorage.setItem('adminId', localAdmin.admin_id);
-                localStorage.setItem('adminUsername', localAdmin.username);
-                showAlert('Logged in locally. Redirecting...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'admin.html';
-                }, 1000);
-                return;
-            }
-            showAlert('Backend unavailable. If you created a local admin, ensure you use those credentials. Otherwise start the FastAPI server at http://127.0.0.1:8000.', 'error');
-        } else {
-            showAlert(message, 'error');
+        if (localAdminExists) {
+            const localSuccess = await attemptLocalLogin();
+            if (localSuccess) return;
         }
-
+        showAlert(message, 'error');
         loginBtn.disabled = false;
         loginBtn.textContent = 'Login';
-    });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -144,6 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupNotice = document.getElementById('setupNotice');
     const createAdminMessage = document.getElementById('createAdminMessage');
     const existingAdminNotice = document.getElementById('existingAdminNotice');
+    const adminStatusMessage = document.getElementById('adminStatusMessage');
+
+    const loginForm = document.getElementById('adminLoginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleAdminLogin);
+    }
 
     const localAdmin = getLocalAdmin();
     if (localAdmin) {
@@ -153,7 +176,16 @@ document.addEventListener('DOMContentLoaded', () => {
             existingAdminNotice.style.display = 'block';
         }
         if (createAdminMessage) createAdminMessage.style.display = 'none';
+        if (adminStatusMessage) {
+            adminStatusMessage.textContent = `Local admin saved. Login with username or email: "${localAdmin.username}" / "${localAdmin.email}"`;
+            adminStatusMessage.style.display = 'block';
+        }
         return;
+    }
+
+    if (adminStatusMessage) {
+        adminStatusMessage.textContent = 'No local admin account found. Create admin credentials first.';
+        adminStatusMessage.style.display = 'block';
     }
 
     fetch(`${API_URL_LOGIN}/admin`)
@@ -171,9 +203,4 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(() => {
             if (setupNotice) setupNotice.style.display = 'none';
         });
-
-    const loginForm = document.getElementById('adminLoginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleAdminLogin);
-    }
 });

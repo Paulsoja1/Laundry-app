@@ -32,6 +32,35 @@
 
     <div class="dashboard-actions">
         <button id="deleteAdminBtn" class="btn-secondary" onclick="deleteAdminCredentials()">Delete Admin Credentials</button>
+        <button id="clearOrdersBtn" class="btn-secondary" onclick="clearAllOrders()">Clear All Orders</button>
+        <button id="manageRidersBtn" class="btn-secondary" onclick="toggleRidersPanel()">Manage Riders</button>
+    </div>
+
+    <div id="ridersPanel" class="riders-panel" style="display:none; padding:1rem; border:1px solid #ddd; margin:0.5rem 0;">
+        <h3>Riders</h3>
+        <ul id="ridersList" style="list-style:none;padding:0;margin:0 0 0.5rem 0;"></ul>
+        <form id="addRiderForm" style="display:flex;gap:0.5rem;">
+            <input id="newRiderName" placeholder="Rider name" required />
+            <button type="submit">Add Rider</button>
+        </form>
+    </div>
+    <div id="liveRidersPanel" class="live-riders-panel" style="display:block; padding:1rem; border:1px solid #eee; margin:0.5rem 0;">
+        <h3>Available Riders</h3>
+        <div style="margin-bottom:0.5rem;display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+            <button onclick="renderLiveRiders()">Refresh Riders</button>
+            <span style="color:#333;font-weight:600;">Tap an available rider card to assign for pickup.</span>
+        </div>
+        <div id="availableRidersContainer" class="rider-card-grid"></div>
+    </div>
+    <div id="mapPanel" style="margin:0.5rem 0;padding:0.5rem;border:1px solid #eee;">
+        <h3>Rider Map</h3>
+        <div style="margin-bottom:0.5rem;display:flex;gap:0.5rem;align-items:center;">
+            <button id="mapToggleLeaflet">Use Leaflet</button>
+            <button id="mapCenterAvailable">Center on Available</button>
+            <label style="font-size:0.9rem;color:#333;display:flex;align-items:center;gap:0.25rem;"><input id="mapFilterAvailableBike" type="checkbox"> Show only available bike riders</label>
+            <small style="color:#666;">Provide `googleMapsApiKey` in localStorage to use Google Maps.</small>
+        </div>
+        <div id="map" style="height:420px;width:100%;background:#f6f6f6;border:1px solid #ddd;"></div>
     </div>
 
     <div class="admin-container" id="statsContainer">
@@ -51,6 +80,7 @@
                     <th>Payment</th>
                     <th>Rider</th>
                     <th>Date</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody></tbody>

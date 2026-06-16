@@ -604,9 +604,8 @@ function getLocalDashboardData() {
     const totalRevenue = orders.reduce((sum, order) => {
         const status = String(order.status || '').toLowerCase();
         const isDelivered = status === 'delivered' || status === 'completed';
-        if (!isDelivered) return sum;
-        const cost = parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0);
-        return sum + (isNaN(cost) ? 0 : cost);
+        const amount = isDelivered ? parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0) : 0;
+        return sum + (isNaN(amount) ? 0 : amount);
     }, 0);
 
     return {
@@ -724,9 +723,8 @@ async function loadDashboard() {
         data.total_revenue = mergedOrders.reduce((sum, order) => {
             const status = String(order.status || '').toLowerCase();
             const isDelivered = status === 'delivered' || status === 'completed';
-            if (!isDelivered) return sum;
-            const cost = parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0);
-            return sum + (isNaN(cost) ? 0 : cost);
+            const amount = isDelivered ? parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0) : 0;
+            return sum + (isNaN(amount) ? 0 : amount);
         }, 0);
         data.messages = getLocalContactMessages();
         data.total_messages = data.messages.length;

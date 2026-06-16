@@ -466,15 +466,31 @@ function handleRegistration(event) {
             created_at: new Date().toISOString()
         };
 
-        // Save account locally so the signup works without a backend server.
-        localStorage.setItem('userId', userData.user_id);
-        localStorage.setItem('username', userData.username);
+        // Normalize and preserve existing users list.
+        const normalizedUser = {
+            user_id: userData.user_id,
+            userId: userData.user_id,
+            username: userData.username,
+            email: userData.email,
+            phone: userData.phone,
+            address: userData.address,
+            profilePic: userData.profilePic,
+            created_at: userData.created_at
+        };
 
         let users = JSON.parse(localStorage.getItem('users')) || [];
-        users.push(userData);
-        localStorage.setItem('users', JSON.stringify(users));
+        const existingUserIndex = users.findIndex(user => String(user.user_id || user.userId) === normalizedUser.user_id || String(user.email || '').toLowerCase() === normalizedUser.email.toLowerCase());
+        if (existingUserIndex > -1) {
+            users[existingUserIndex] = normalizedUser;
+        } else {
+            users.push(normalizedUser);
+        }
 
-        alert('Account created successfully! Welcome ' + userData.username);
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('userId', normalizedUser.user_id);
+        localStorage.setItem('username', normalizedUser.username);
+
+        alert('Account created successfully! Welcome ' + normalizedUser.username);
 
         closeRegisterModal();
         document.getElementById('registerForm').reset();

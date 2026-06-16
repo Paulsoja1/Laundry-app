@@ -22,7 +22,7 @@ const API_URL = "http://127.0.0.1:8000";
                 created_at: userData.created_at || new Date().toISOString(),
                 profilePic: userData.profilePic || userData.avatar || null
             };
-            const existingIndex = users.findIndex(user => String(user.user_id || user.userId) === userId);
+            const existingIndex = users.findIndex(user => String(user.user_id || user.userId) === userId || String(user.email || '').toLowerCase() === normalizedUser.email.toLowerCase());
             if (existingIndex > -1) {
                 users[existingIndex] = normalizedUser;
             } else {
@@ -447,7 +447,7 @@ const API_URL = "http://127.0.0.1:8000";
 
             window.addEventListener('storage', function(event) {
                 if (!event.key) return;
-                if (event.key === 'orders' || event.key === 'users') {
+                if (['orders', 'users', 'userId', 'username'].includes(event.key)) {
                     console.log('Detected localStorage change in account page:', event.key);
                     loadAccountData();
                 }

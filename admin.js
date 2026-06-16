@@ -18,6 +18,60 @@ function sortByCreatedAtDesc(items, dateKey = 'created_at') {
     });
 }
 
+function normalizeOrderStatus(status) {
+    return String(status || '').trim().toLowerCase();
+}
+
+function isOrderCompleted(status) {
+    const normalized = normalizeOrderStatus(status);
+    return normalized === 'completed' || normalized === 'delivered';
+}
+
+function isOrderPending(status) {
+    return normalizeOrderStatus(status) === 'pending';
+}
+
+function computePaymentDisplay(order) {
+    if (!order) return 'Pending';
+    const paymentStatus = normalizeOrderStatus(order.payment_status || order.status || '');
+    const orderStatus = normalizeOrderStatus(order.status || '');
+    if (paymentStatus === 'cancelled' || orderStatus === 'cleared') return 'Cancelled';
+    if (isOrderCompleted(order.status) || paymentStatus === 'completed' || order.delivered_at) return 'Completed';
+    return 'Pending';
+}
+
+function computeOrderPaymentFields(order, index) {
+    const payment_id = order.orderId || order.order_id || `PAY-${Date.now()}-${index}`;
+    const order_id = order.orderId || order.order_id || `ORD-${Date.now()}-${index}`;
+    let amount = parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0) || 0;
+    let payment_method = order.payment_method || order.paymentMethod || 'Cash on Delivery';
+    let status = order.payment_status || 'Completed';
+
+    const orderStatus = normalizeOrderStatus(order.status || '');
+    const wasDelivered = isOrderCompleted(order.status) || !!order.delivered_at;
+
+    if (orderStatus === 'cleared' && !wasDelivered) {
+        payment_method = 'Cancelled';
+        status = 'Cancelled';
+        amount = 0;
+    }
+
+    if (normalizeOrderStatus(order.payment_status) === 'cancelled') {
+        payment_method = order.payment_method || 'Cancelled';
+        status = 'Cancelled';
+        amount = 0;
+    }
+
+    return {
+        payment_id,
+        order_id,
+        amount,
+        payment_method,
+        status,
+        created_at: order.delivered_at || order.orderDate || order.created_at || new Date().toISOString()
+    };
+}
+
 // Riders management (stored in localStorage under 'riders')
 function getRiders() {
     try {
@@ -33,13 +87,17 @@ function saveRiders(riders) {
 
 function ensureDefaultRiders() {
     const existing = getRiders();
+    const johnExists = existing && existing.some(r => r.name === 'John Alu');
     if (!existing || existing.length === 0) {
         const defaults = [
-            { name: 'Rider A', available: true, status: 'available', current_order: null, last_location: '', last_update: null },
+            { name: 'John Alu', available: true, status: 'available', current_order: null, last_location: '', last_update: null },
             { name: 'Rider B', available: true, status: 'available', current_order: null, last_location: '', last_update: null },
             { name: 'Rider C', available: true, status: 'available', current_order: null, last_location: '', last_update: null }
         ];
         saveRiders(defaults);
+    } else if (!johnExists) {
+        existing.push({ name: 'John Alu', available: true, status: 'available', current_order: null, last_location: '', last_update: null });
+        saveRiders(existing);
     }
 }
 
@@ -545,22 +603,30 @@ function renderOrderRow(order) {
     const dropButton = (riderAssigned && (order.status || '').toLowerCase() === 'out for pickup')
         ? `<button onclick="dropPackage('${orderId}')" class="btn-send">Drop Package</button>`
         : '';
+    const delivered = isOrderCompleted(order.status) || !!order.delivered_at;
 
     return `
         <tr>
             <td>${orderId || 'N/A'}</td>
             <td>${order.customer_name || order.name || order.user_name || order.username || 'N/A'}</td>
             <td>${order.service || order.service_type || 'N/A'}</td>
-            <td>₦${parseInt(order.estimatedCost || order.total_price || order.total_price || 0, 10)}</td>
+            <td>
+            <input type="number" min="0" step="0.01" value="${parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0).toFixed(2)}" 
+                onchange="updateOrderPayment('${orderId}', this.value, null)" style="width:100px;" />
+        </td>
+            <td>
+                <select onchange="updateOrderPayment('${orderId}', null, this.value)">
+                    ${renderPaymentMethodOptions(order.payment_method || order.paymentMethod || 'Cash on Delivery')}
+                </select>
+            </td>
             <td><span class="status-badge status-${statusClass}">${order.status || 'Completed'}</span></td>
-            <td><span class="status-badge status-${(order.payment_status || 'Completed').toLowerCase()}">${order.payment_status || 'Completed'}</span></td>
+            <td>
+                <span class="status-badge status-${computePaymentDisplay(order).toLowerCase().replace(/\s+/g,'_')}">${computePaymentDisplay(order)}</span>
+            </td>
             <td>${order.rider_assigned || order.rider || 'Not Assigned'}</td>
             <td>${new Date(order.orderDate || order.created_at || new Date().toISOString()).toLocaleDateString()}</td>
             <td>
-                <select onchange="assignRider('${orderId}', this.value)">${buildRiderOptions(order)}</select>
-                <button onclick="clearOrder('${orderId}')" class="btn-clear">Clear</button>
-                ${sendButton}
-                ${dropButton}
+                ${delivered ? `<button class="btn-done" disabled>Done</button>` : `<button onclick="clearOrder('${orderId}')" class="btn-clear">Cancel Order</button>`}
             </td>
         </tr>
     `;
@@ -592,18 +658,10 @@ function getLocalDashboardData() {
     const messages = sortByCreatedAtDesc(getLocalContactMessages(), 'timestamp');
     const challenges = JSON.parse(localStorage.getItem('challenges')) || [];
 
-    const payments = sortByCreatedAtDesc(orders.map((order, index) => ({
-        payment_id: order.orderId || `PAY-${Date.now()}-${index}`,
-        order_id: order.orderId || order.order_id || `ORD-${Date.now()}-${index}`,
-        amount: parseFloat(order.estimatedCost || order.estimated_cost || 0),
-        payment_method: 'N/A',
-        status: 'Completed',
-        created_at: order.orderDate || order.created_at || new Date().toISOString()
-    })), 'created_at');
+    const payments = sortByCreatedAtDesc(orders.map((order, index) => computeOrderPaymentFields(order, index)), 'created_at');
 
     const totalRevenue = orders.reduce((sum, order) => {
-        const status = String(order.status || '').toLowerCase();
-        const isDelivered = status === 'delivered' || status === 'completed';
+        const isDelivered = isOrderCompleted(order.status);
         const amount = isDelivered ? parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0) : 0;
         return sum + (isNaN(amount) ? 0 : amount);
     }, 0);
@@ -612,8 +670,8 @@ function getLocalDashboardData() {
         total_users: users.length,
         total_orders: orders.length,
         total_revenue: totalRevenue,
-        pending_orders: orders.filter(order => order.status === 'Pending').length,
-        completed_orders: orders.filter(order => order.status === 'Completed').length,
+        pending_orders: orders.filter(order => isOrderPending(order.status)).length,
+        completed_orders: orders.filter(order => isOrderCompleted(order.status)).length,
         total_messages: messages.length,
         open_challenges: challenges.filter(c => c.status === 'open').length,
         orders,
@@ -718,11 +776,10 @@ async function loadDashboard() {
         data.orders = mergedOrders;
         data.total_users = mergedUsers.length;
         data.total_orders = mergedOrders.length;
-        data.pending_orders = mergedOrders.filter(order => (order.status || '').toLowerCase() === 'pending').length;
-        data.completed_orders = mergedOrders.filter(order => (order.status || '').toLowerCase() === 'completed' || (order.status || '').toLowerCase() === 'delivered').length;
+        data.pending_orders = mergedOrders.filter(order => isOrderPending(order.status)).length;
+        data.completed_orders = mergedOrders.filter(order => isOrderCompleted(order.status)).length;
         data.total_revenue = mergedOrders.reduce((sum, order) => {
-            const status = String(order.status || '').toLowerCase();
-            const isDelivered = status === 'delivered' || status === 'completed';
+            const isDelivered = isOrderCompleted(order.status);
             const amount = isDelivered ? parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0) : 0;
             return sum + (isNaN(amount) ? 0 : amount);
         }, 0);
@@ -766,15 +823,15 @@ function mergeUsers(backendUsers, localUsers) {
 
 function mergeOrders(backendOrders, localOrders) {
     const orderMap = new Map();
-    const addOrder = order => {
+    const addOrder = (order, override = false) => {
         const id = String(order.order_id || order.orderId || '').trim();
         if (!id) return;
-        if (!orderMap.has(id)) {
+        if (!orderMap.has(id) || override) {
             orderMap.set(id, order);
         }
     };
-    (backendOrders || []).forEach(addOrder);
-    (localOrders || []).forEach(addOrder);
+    (backendOrders || []).forEach(order => addOrder(order, false));
+    (localOrders || []).forEach(order => addOrder(order, true));
     return sortByCreatedAtDesc(Array.from(orderMap.values()), 'orderDate');
 }
 
@@ -863,12 +920,84 @@ function clearOrder(orderId) {
         }
     }
 
+    const wasDelivered = isOrderCompleted(orders[idx].status);
     orders[idx].status = 'Cleared';
     orders[idx].cleared_at = new Date().toISOString();
     orders[idx].cleared_by = localStorage.getItem('adminUsername') || 'admin';
 
+    if (!wasDelivered) {
+        orders[idx].payment_method = 'Cancelled';
+        orders[idx].payment_status = 'Cancelled';
+        orders[idx].total_price = 0;
+        orders[idx].estimatedCost = 0;
+        orders[idx].cancelled_at = new Date().toISOString();
+    }
+
     localStorage.setItem('orders', JSON.stringify(orders));
     loadDashboard();
+}
+
+function updateOrderPayment(orderId, amount, method) {
+    if (!orderId) return;
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const idx = orders.findIndex(o => String(o.order_id || o.orderId) === String(orderId));
+    if (idx === -1) return;
+
+    if (amount != null) {
+        const sanitized = parseFloat(String(amount).replace(/[^0-9.-]+/g, ''));
+        if (!isNaN(sanitized)) {
+            orders[idx].total_price = sanitized;
+            orders[idx].estimatedCost = sanitized;
+        }
+    }
+
+    if (method != null) {
+        orders[idx].payment_method = method || 'Cash on Delivery';
+    }
+
+    localStorage.setItem('orders', JSON.stringify(orders));
+    loadDashboard();
+}
+
+function updateOrderPaymentStatus(orderId, paymentStatus) {
+    if (!orderId) return;
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const idx = orders.findIndex(o => String(o.order_id || o.orderId) === String(orderId));
+    if (idx === -1) return;
+
+    orders[idx].payment_status = paymentStatus || 'Completed';
+    localStorage.setItem('orders', JSON.stringify(orders));
+    loadDashboard();
+}
+
+function renderPaymentMethodOptions(selectedMethod) {
+    const methods = [
+        'Cash on Delivery',
+        'POS',
+        'Bank Transfer',
+        'Paystack',
+        'Flutterwave',
+        'Opay',
+        'Mobile Money',
+        'Cancelled'
+    ];
+    return methods.map(method => `
+        <option value="${escapeHtml(method)}" ${method === selectedMethod ? 'selected' : ''}>${escapeHtml(method)}</option>
+    `).join('');
+}
+
+function renderPaymentStatusOptions(selectedStatus) {
+    const statuses = [
+        'Completed',
+        'Pending',
+        'Failed',
+        'Refunded',
+        'Authorized',
+        'Cancelled'
+    ];
+    return statuses.map(status => `
+        <option value="${escapeHtml(status)}" ${status === selectedStatus ? 'selected' : ''}>${escapeHtml(status)}</option>
+    `).join('');
 }
 
 function clearAllOrders() {

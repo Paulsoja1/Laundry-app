@@ -602,7 +602,10 @@ function getLocalDashboardData() {
     })), 'created_at');
 
     const totalRevenue = orders.reduce((sum, order) => {
-        const cost = parseFloat(order.estimatedCost || order.estimated_cost || 0);
+        const status = String(order.status || '').toLowerCase();
+        const isDelivered = status === 'delivered' || status === 'completed';
+        if (!isDelivered) return sum;
+        const cost = parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0);
         return sum + (isNaN(cost) ? 0 : cost);
     }, 0);
 
@@ -718,6 +721,13 @@ async function loadDashboard() {
         data.total_orders = mergedOrders.length;
         data.pending_orders = mergedOrders.filter(order => (order.status || '').toLowerCase() === 'pending').length;
         data.completed_orders = mergedOrders.filter(order => (order.status || '').toLowerCase() === 'completed' || (order.status || '').toLowerCase() === 'delivered').length;
+        data.total_revenue = mergedOrders.reduce((sum, order) => {
+            const status = String(order.status || '').toLowerCase();
+            const isDelivered = status === 'delivered' || status === 'completed';
+            if (!isDelivered) return sum;
+            const cost = parseFloat(order.total_price || order.estimatedCost || order.estimated_cost || 0);
+            return sum + (isNaN(cost) ? 0 : cost);
+        }, 0);
         data.messages = getLocalContactMessages();
         data.total_messages = data.messages.length;
 
